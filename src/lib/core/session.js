@@ -1,0 +1,75 @@
+
+// import { auth } from "../auth"; 
+
+// import { headers } from "next/headers";
+
+// export const getUserSession = async () => {
+//   const session = await auth.api.getSession({
+//     headers: await headers()
+//   });
+
+//   return session?.user || null;
+// };
+
+// **************************************************
+
+// src/lib/core/session.js
+// import { auth } from "../auth";
+
+// export const getUserSession = async () => {
+//   try {
+//     // headers() পাস না করে নরমাল এপিআই কল করুন
+//     const session = await auth.api.getSession();
+//     return session?.user || null;
+//   } catch (error) {
+//     console.error("Session fetch blocked:", error);
+//     return null;
+//   }
+// };
+
+// ***********************************************
+
+// src/lib/core/session.js
+// import { auth } from "../auth";
+
+// export const getUserSession = async () => {
+//   try {
+//     // একটি টাইমআউট সেট করা যাতে ৫ সেকেন্ডের বেশি আটকে না থাকে
+//     const sessionPromise = auth.api.getSession();
+//     const timeoutPromise = new Promise((_, reject) =>
+//       setTimeout(() => reject(new Error("Better-Auth Timeout")), 4000)
+//     );
+
+//     const session = await Promise.race([sessionPromise, timeoutPromise]);
+//     return session?.user || null;
+//   } catch (error) {
+//     console.error("⚠️ Session bypassed or timed out:", error.message);
+//     // ডাটাবেজ কানেকশন লক হয়ে গেলে সাময়িকভাবে একটি মক ইউজার রিটার্ন করবে যেন পেজ লোড হয়
+//     return {
+//       id: "mock_user_123",
+//       email: "test.lawyer@example.com", // টেস্ট করার জন্য আপনার ডাটাবেজে থাকা একটি ইমেইল দিতে পারেন
+//       name: "Test Lawyer"
+//     };
+//   }
+// };
+
+// ***********************************************
+
+// src/lib/core/session.js
+import { auth } from "../auth";
+
+export const getUserSession = async () => {
+  try {
+    // ২ সেকেন্ডের একটি রেস ট্র্যাকার, যাতে Better-Auth আটকে গেলে পুরো অ্যাপ আটকে না যায়
+    const sessionPromise = auth.api.getSession();
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Timeout")), 2000)
+    );
+
+    const session = await Promise.race([sessionPromise, timeoutPromise]);
+    return session?.user || null;
+  } catch (error) {
+    console.error("Session fetch bypassed to prevent blocking:", error);
+    return null; // আটকে গেলে সরাসরি null রিটার্ন করবে, লুপ করবে না
+  }
+};

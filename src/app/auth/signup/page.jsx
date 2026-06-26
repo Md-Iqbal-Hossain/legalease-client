@@ -947,7 +947,7 @@ export default function SignUpPage() {
         </h2>
         <p className="mt-2 text-center text-sm text-slate-400">
           Already have a professional account?{' '}
-          <Link href="/login" className="font-medium text-amber-500 hover:text-amber-400 transition-colors underline underline-offset-4">
+          <Link href="/auth/signin" className="font-medium text-amber-500 hover:text-amber-400 transition-colors underline underline-offset-4">
             Sign In here
           </Link>
         </p>
