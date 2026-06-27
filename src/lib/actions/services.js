@@ -72,36 +72,102 @@
 
 // ********************************************************************************
 
-import { serverFetch, serverMutation } from '../core/server';
+// import { serverFetch, serverMutation } from '../core/server';
+
+// /**
+//  * ACTION: Create a brand new legal service entry
+//  */
+// export async function createLegalService(serviceData) {
+//   return serverMutation('/services', 'POST', serviceData);
+// }
+
+// /**
+//  * ACTION: Fetch all registered legal services
+//  */
+// export async function getAllLegalServices() {
+//   try {
+//     return await serverFetch('/services');
+//   } catch (error) {
+//     return []; 
+//   }
+// }
+
+// /**
+//  * ACTION: Modify an existing service outline by its unique database ID
+//  */
+// export async function updateLegalService(id, updatedFields) {
+//   return serverMutation(`/services/${id}`, 'PUT', updatedFields);
+// }
+
+// /**
+//  * ACTION: Remove a legal service option completely
+//  */
+// export async function deleteLegalService(id) {
+//   return serverMutation(`/services/${id}`, 'DELETE');
+// }
+
+// *************************************************************
+
+import { serverFetch } from "../core/server";
 
 /**
- * ACTION: Create a brand new legal service entry
- */
-export async function createLegalService(serviceData) {
-  return serverMutation('/services', 'POST', serviceData);
-}
-
-/**
- * ACTION: Fetch all registered legal services
+ * ডাটাবেজ থেকে সমস্ত লিগ্যাল সার্ভিস রিয়েল-টাইমে নিয়ে আসার অ্যাকশন
  */
 export async function getAllLegalServices() {
   try {
-    return await serverFetch('/services');
+    return await serverFetch('/api/services');
   } catch (error) {
-    return []; 
+    console.error("Fetch Error on path /api/services:", error);
+    return [];
   }
 }
 
 /**
- * ACTION: Modify an existing service outline by its unique database ID
+ * নতুন লিগ্যাল সার্ভিস প্রফেশনাল ডাটাবেজে যুক্ত করার অ্যাকশন
  */
-export async function updateLegalService(id, updatedFields) {
-  return serverMutation(`/services/${id}`, 'PUT', updatedFields);
+export async function createLegalService(serviceData) {
+  try {
+    return await serverFetch('/api/services', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(serviceData),
+    });
+  } catch (error) {
+    console.error("Error creating legal service:", error);
+    throw error;
+  }
 }
 
 /**
- * ACTION: Remove a legal service option completely
+ * সুনির্দিষ্ট সার্ভিস আইডি ধরে ডেটা আপডেট বা ম্যুটেশন করার অ্যাকশন
+ */
+export async function updateLegalService(id, updatedData) {
+  try {
+    return await serverFetch(`/api/services/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedData),
+    });
+  } catch (error) {
+    console.error(`Error updating legal service with ID ${id}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * সুনির্দিষ্ট লিগ্যাল সার্ভিস কালেকশন থেকে ডিলিট করার অ্যাকশন
  */
 export async function deleteLegalService(id) {
-  return serverMutation(`/services/${id}`, 'DELETE');
+  try {
+    return await serverFetch(`/api/services/${id}`, {
+      method: 'DELETE',
+    });
+  } catch (error) {
+    console.error(`Error deleting legal service with ID ${id}:`, error);
+    throw error;
+  }
 }

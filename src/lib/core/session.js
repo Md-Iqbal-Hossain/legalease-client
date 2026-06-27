@@ -56,12 +56,37 @@
 // ***********************************************
 
 // src/lib/core/session.js
+// import { auth } from "../auth";
+
+// export const getUserSession = async () => {
+//   try {
+//     // ২ সেকেন্ডের একটি রেস ট্র্যাকার, যাতে Better-Auth আটকে গেলে পুরো অ্যাপ আটকে না যায়
+//     const sessionPromise = auth.api.getSession();
+//     const timeoutPromise = new Promise((_, reject) =>
+//       setTimeout(() => reject(new Error("Timeout")), 2000)
+//     );
+
+//     const session = await Promise.race([sessionPromise, timeoutPromise]);
+//     return session?.user || null;
+//   } catch (error) {
+//     console.error("Session fetch bypassed to prevent blocking:", error);
+//     return null; // আটকে গেলে সরাসরি null রিটার্ন করবে, লুপ করবে না
+//   }
+// };
+
+// *************************************************
+
 import { auth } from "../auth";
+import { headers } from "next/headers"; // 💡 এটি অবশ্যই লাগবে হেডার্স রিড করার জন্য
 
 export const getUserSession = async () => {
   try {
-    // ২ সেকেন্ডের একটি রেস ট্র্যাকার, যাতে Better-Auth আটকে গেলে পুরো অ্যাপ আটকে না যায়
-    const sessionPromise = auth.api.getSession();
+    // Better-Auth কে সার্ভার-সাইড হেডার পাস করা হলো যাতে সে কুকি/সেশন ডিটেক্ট করতে পারে
+    const sessionPromise = auth.api.getSession({
+      headers: await headers(), // 👈 এই জাদুকরী লাইনটিই মিসিং ছিল
+    });
+
+    // ২ সেকেন্ডের রেস ট্র্যাকার
     const timeoutPromise = new Promise((_, reject) =>
       setTimeout(() => reject(new Error("Timeout")), 2000)
     );
@@ -70,6 +95,6 @@ export const getUserSession = async () => {
     return session?.user || null;
   } catch (error) {
     console.error("Session fetch bypassed to prevent blocking:", error);
-    return null; // আটকে গেলে সরাসরি null রিটার্ন করবে, লুপ করবে না
+    return null; 
   }
 };
