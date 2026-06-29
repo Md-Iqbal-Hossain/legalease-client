@@ -76,17 +76,41 @@
 
 // *************************************************
 
+// import { auth } from "../auth";
+// import { headers } from "next/headers"; // 💡 এটি অবশ্যই লাগবে হেডার্স রিড করার জন্য
+
+// export const getUserSession = async () => {
+//   try {
+//     // Better-Auth কে সার্ভার-সাইড হেডার পাস করা হলো যাতে সে কুকি/সেশন ডিটেক্ট করতে পারে
+//     const sessionPromise = auth.api.getSession({
+//       headers: await headers(), // 👈 এই জাদুকরী লাইনটিই মিসিং ছিল
+//     });
+
+//     // ২ সেকেন্ডের রেস ট্র্যাকার
+//     const timeoutPromise = new Promise((_, reject) =>
+//       setTimeout(() => reject(new Error("Timeout")), 2000)
+//     );
+
+//     const session = await Promise.race([sessionPromise, timeoutPromise]);
+//     return session?.user || null;
+//   } catch (error) {
+//     console.error("Session fetch bypassed to prevent blocking:", error);
+//     return null; 
+//   }
+// };
+
+// *****************************************************
+
 import { auth } from "../auth";
-import { headers } from "next/headers"; // 💡 এটি অবশ্যই লাগবে হেডার্স রিড করার জন্য
+import { headers } from "next/headers"; 
+import { redirect } from "next/navigation"; // 👈 রিডাইরেক্ট ইম্পোর্ট করা হলো
 
 export const getUserSession = async () => {
   try {
-    // Better-Auth কে সার্ভার-সাইড হেডার পাস করা হলো যাতে সে কুকি/সেশন ডিটেক্ট করতে পারে
     const sessionPromise = auth.api.getSession({
-      headers: await headers(), // 👈 এই জাদুকরী লাইনটিই মিসিং ছিল
+      headers: await headers(), 
     });
 
-    // ২ সেকেন্ডের রেস ট্র্যাকার
     const timeoutPromise = new Promise((_, reject) =>
       setTimeout(() => reject(new Error("Timeout")), 2000)
     );
@@ -97,4 +121,23 @@ export const getUserSession = async () => {
     console.error("Session fetch bypassed to prevent blocking:", error);
     return null; 
   }
+};
+
+/* =========================================================================
+    🛡️ LEGALEASE SERVER-SIDE ROLE VALIDATOR
+   ========================================================================= */
+export const requireRole = async (role) => {
+  const user = await getUserSession();
+  
+  // ১. সেশন না থাকলে সরাসরি সাইন-ইন পেজে পুশ করবে
+  if (!user) {
+    redirect('/auth/signin');
+  }
+  
+  // ২. রোল না মিললে আন-অথোরাইজড প্রোটেকশন পেজে নিয়ে যাবে
+  if (user?.role !== role) {
+    redirect('/unauthorized');
+  }
+  
+  return user;
 };
