@@ -1221,13 +1221,127 @@
 
 // *********************************************************************
 
+// import { getPlanById } from '@/lib/api/plans';
+// import { getUserSession } from '@/lib/core/session';
+// import { redirect } from 'next/navigation';
+// import React from 'react';
+// import Link from 'next/link';
+// // Gravity UI Icons (As used in your context reference)
+// import { ShieldExclamation, CircleInfo, Rocket } from '@gravity-ui/icons';
+
+// const ManageLegalProfilePage = async () => {
+//     const user = await getUserSession();
+    
+//     if (!user) {
+//         redirect('/auth/signin?redirect=/dashboard/lawyer/manage-legal-profile');
+//     }
+
+//     if (user.role !== 'lawyer') {
+//         return (
+//             <div className="w-full min-h-[80vh] flex flex-col justify-center items-center text-white p-6">
+//                 <div className="max-w-md w-full text-center p-8 rounded-2xl bg-zinc-900 border border-zinc-800 shadow-xl">
+//                     <div className="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
+//                         <ShieldExclamation className="w-6 h-6" />
+//                     </div>
+//                     <h3 className="text-xl font-bold text-zinc-100 mb-2">Access Restricted</h3>
+//                     <p className="text-zinc-400 text-sm leading-relaxed mb-6">
+//                         Only verified lawyers can access profile management configurations.
+//                     </p>
+//                 </div>
+//             </div>
+//         );
+//     }
+
+//     // লইয়ারের বর্তমান প্ল্যান চেক করা (Default: lawyer_unverified)
+//     const plan = await getPlanById(user?.plan || 'lawyer_unverified');
+    
+//     // ধরি আনভেরিফাইড লইয়ারের সার্ভিস কাউন্ট ০, প্রিমিয়াম হলে ১০টি করা যাবে
+//     const currentServiceCount = 0; 
+//     const hasReachedLimit = plan.maxServices === 0;
+//     const usagePercentage = plan.maxServices > 0 ? (currentServiceCount / plan.maxServices) * 100 : 0;
+
+//     return (
+//         <div className="w-full min-h-screen bg-zinc-950 text-zinc-50 py-12 px-4 sm:px-6 lg:px-8">
+//             <div className="max-w-3xl mx-auto space-y-8">
+                
+//                 {/* 1. Subscription & One-time Publishing Fee Quota Tracker Card */}
+//                 <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-lg">
+//                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+//                         <div>
+//                             <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+//                                 Verification & Publishing Status
+//                             </span>
+//                             <h2 className="text-lg font-bold text-zinc-100 mt-0.5">
+//                                 Profile Status: <span className={hasReachedLimit ? "text-amber-400" : "text-emerald-400"}>{plan.name}</span>
+//                             </h2>
+//                         </div>
+//                         <span className="self-start sm:self-center px-2.5 py-1 text-xs font-medium rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700">
+//                             Active Tier: <strong className="text-white font-semibold">{plan.name}</strong>
+//                         </span>
+//                     </div>
+
+//                     {/* Progress Bar (0% for Unverified, 100% for Verified) */}
+//                     <div className="w-full bg-zinc-800 h-2.5 rounded-full overflow-hidden mb-5">
+//                         <div 
+//                             className={`h-full transition-all duration-500 rounded-full ${
+//                                 hasReachedLimit ? 'bg-amber-500' : 'bg-emerald-500'
+//                             }`}
+//                             style={{ width: `${hasReachedLimit ? 10 : 100}%` }}
+//                         />
+//                     </div>
+
+//                     {/* Upsell Paywall Message */}
+//                     <div className="flex items-start gap-3 bg-amber-950/30 border border-amber-900/50 rounded-xl p-4 text-sm text-amber-300/90">
+//                         <Rocket className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+//                         <div className="flex-1 sm:flex sm:items-center sm:justify-between gap-4">
+//                             <p>Pay your one-time professional publishing fee to list your card on the "Browse Lawyers" catalog.</p>
+//                             <Link 
+//                                 href="/dashboard/lawyer/pay-verification" 
+//                                 className="inline-block mt-2 sm:mt-0 whitespace-nowrap text-xs font-bold bg-amber-600 hover:bg-amber-500 text-zinc-950 px-3 py-1.5 rounded-lg transition"
+//                             >
+//                                 Pay Verification Fee ($49)
+//                             </Link>
+//                         </div>
+//                     </div>
+//                 </div>
+
+//                 {/* 2. Content Control Block */}
+//                 {hasReachedLimit ? (
+//                     <div className="bg-zinc-900/50 border border-dashed border-zinc-800 rounded-2xl p-8 text-center flex flex-col items-center justify-center">
+//                         <div className="w-10 h-10 bg-zinc-800 text-zinc-400 rounded-full flex items-center justify-center mb-3">
+//                             <CircleInfo className="w-5 h-5" />
+//                         </div>
+//                         <h4 className="text-base font-semibold text-zinc-200">Publishing License Required</h4>
+//                         <p className="text-sm text-zinc-500 max-w-sm mt-1">
+//                             Your legal directory listing is currently hidden from clients. Complete the baseline activation payment above to unlock profile management.
+//                         </p>
+//                     </div>
+//                 ) : (
+//                     <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800">
+//                         <h3 className="text-lg font-bold">Manage Services Form (Active View)</h3>
+//                         <p className="text-zinc-400 text-sm mt-1">Add or update the legal specializations you provide.</p>
+//                         {/* আপনার বাকি CRUD ফর্ম বা টেবিল এখানে বসবে */}
+//                     </div>
+//                 )}
+                
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default ManageLegalProfilePage;
+
+// *******************************************************
+
 import { getPlanById } from '@/lib/api/plans';
 import { getUserSession } from '@/lib/core/session';
 import { redirect } from 'next/navigation';
 import React from 'react';
-import Link from 'next/link';
-// Gravity UI Icons (As used in your context reference)
 import { ShieldExclamation, CircleInfo, Rocket } from '@gravity-ui/icons';
+
+// ফোর্স ডাইনামিক রেন্ডারিং যাতে লাইভ প্ল্যান সিঙ্ক হয়
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const ManageLegalProfilePage = async () => {
     const user = await getUserSession();
@@ -1252,13 +1366,39 @@ const ManageLegalProfilePage = async () => {
         );
     }
 
-    // লইয়ারের বর্তমান প্ল্যান চেক করা (Default: lawyer_unverified)
+    // লইয়ারের বর্তমান প্ল্যান চেক করা (Default: lawyer_unverified)
     const plan = await getPlanById(user?.plan || 'lawyer_unverified');
     
-    // ধরি আনভেরিফাইড লইয়ারের সার্ভিস কাউন্ট ০, প্রিমিয়াম হলে ১০টি করা যাবে
+    // ধরি আনভেরিফাইড লইয়ারের সার্ভিস কাউন্ট ০, প্রিমিয়াম হলে ১০টি করা যাবে
     const currentServiceCount = 0; 
     const hasReachedLimit = plan.maxServices === 0;
-    const usagePercentage = plan.maxServices > 0 ? (currentServiceCount / plan.maxServices) * 100 : 0;
+
+    // 🚀 NEXT.JS SERVER ACTION: সরাসরি স্ট্রাইপ পেমেন্ট সেশন হ্যান্ডলার
+    async function handleVerification() {
+        'use server';
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API_URL}/api/create-checkout-session`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: user.email,
+                    paymentType: 'verification',
+                    amount: 49,
+                    planId: 'lawyer_premium'
+                }),
+            });
+
+            const data = await response.json();
+            
+            if (data?.url) {
+                // 🎯 কোনো ইন্টারমিডিয়েট পেজ ছাড়াই সরাসরি স্ট্রাইপ অফিশিয়াল চেকআউটে রিডাইরেক্ট
+                redirect(data.url);
+            }
+        } catch (error) {
+            console.error("❌ Stripe initiation failed:", error);
+        }
+    }
 
     return (
         <div className="w-full min-h-screen bg-zinc-950 text-zinc-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -1280,7 +1420,7 @@ const ManageLegalProfilePage = async () => {
                         </span>
                     </div>
 
-                    {/* Progress Bar (0% for Unverified, 100% for Verified) */}
+                    {/* Progress Bar (10% for Unverified, 100% for Verified) */}
                     <div className="w-full bg-zinc-800 h-2.5 rounded-full overflow-hidden mb-5">
                         <div 
                             className={`h-full transition-all duration-500 rounded-full ${
@@ -1290,17 +1430,21 @@ const ManageLegalProfilePage = async () => {
                         />
                     </div>
 
-                    {/* Upsell Paywall Message */}
+                    {/* Upsell Paywall Message with Native Server Action Form */}
                     <div className="flex items-start gap-3 bg-amber-950/30 border border-amber-900/50 rounded-xl p-4 text-sm text-amber-300/90">
                         <Rocket className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                         <div className="flex-1 sm:flex sm:items-center sm:justify-between gap-4">
                             <p>Pay your one-time professional publishing fee to list your card on the "Browse Lawyers" catalog.</p>
-                            <Link 
-                                href="/dashboard/lawyer/pay-verification" 
-                                className="inline-block mt-2 sm:mt-0 whitespace-nowrap text-xs font-bold bg-amber-600 hover:bg-amber-500 text-zinc-950 px-3 py-1.5 rounded-lg transition"
-                            >
-                                Pay Verification Fee ($49)
-                            </Link>
+                            
+                            {/* 🛠️ ফর্ম সাবমিটের মাধ্যমে সরাসরি স্ট্রাইপে হিট করবে */}
+                            <form action={handleVerification}>
+                                <button 
+                                    type="submit"
+                                    className="inline-block mt-2 sm:mt-0 whitespace-nowrap text-xs font-bold bg-amber-600 hover:bg-amber-500 text-zinc-950 px-4 py-2 rounded-lg transition shadow-md cursor-pointer"
+                                >
+                                    Pay Verification Fee ($49)
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -1320,7 +1464,6 @@ const ManageLegalProfilePage = async () => {
                     <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800">
                         <h3 className="text-lg font-bold">Manage Services Form (Active View)</h3>
                         <p className="text-zinc-400 text-sm mt-1">Add or update the legal specializations you provide.</p>
-                        {/* আপনার বাকি CRUD ফর্ম বা টেবিল এখানে বসবে */}
                     </div>
                 )}
                 

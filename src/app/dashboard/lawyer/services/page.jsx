@@ -171,7 +171,7 @@ export default function LawyerServicesPage() {
                 <p className="text-sm text-red-200 font-medium">
                   You have reached the maximum limit of services allowed in your current plan. Please upgrade your license to publish more.
                 </p>
-                <Link href="/pricing" className="mt-2 sm:mt-0 inline-block bg-amber-500 text-slate-950 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-amber-400 transition-all text-center shrink-0">
+                <Link href="/dashboard/lawyer/manage-legal-profile" className="mt-2 sm:mt-0 inline-block bg-amber-500 text-slate-950 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-amber-400 transition-all text-center shrink-0">
                   Upgrade Plan
                 </Link>
               </div>
