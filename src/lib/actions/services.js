@@ -108,10 +108,77 @@
 
 // *************************************************************
 
-import { serverFetch } from "../core/server";
+// import { serverFetch } from "../core/server";
+
+// /**
+//  * ডাটাবেজ থেকে সমস্ত লিগ্যাল সার্ভিস রিয়েল-টাইমে নিয়ে আসার অ্যাকশন
+//  */
+// export async function getAllLegalServices() {
+//   try {
+//     return await serverFetch('/api/services');
+//   } catch (error) {
+//     console.error("Fetch Error on path /api/services:", error);
+//     return [];
+//   }
+// }
+
+// /**
+//  * নতুন লিগ্যাল সার্ভিস প্রফেশনাল ডাটাবেজে যুক্ত করার অ্যাকশন
+//  */
+// export async function createLegalService(serviceData) {
+//   try {
+//     return await serverFetch('/api/services', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(serviceData),
+//     });
+//   } catch (error) {
+//     console.error("Error creating legal service:", error);
+//     throw error;
+//   }
+// }
+
+// /**
+//  * সুনির্দিষ্ট সার্ভিস আইডি ধরে ডেটা আপডেট বা ম্যুটেশন করার অ্যাকশন
+//  */
+// export async function updateLegalService(id, updatedData) {
+//   try {
+//     return await serverFetch(`/api/services/${id}`, {
+//       method: 'PUT',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(updatedData),
+//     });
+//   } catch (error) {
+//     console.error(`Error updating legal service with ID ${id}:`, error);
+//     throw error;
+//   }
+// }
+
+// /**
+//  * সুনির্দিষ্ট লিগ্যাল সার্ভিস কালেকশন থেকে ডিলিট করার অ্যাকশন
+//  */
+// export async function deleteLegalService(id) {
+//   try {
+//     return await serverFetch(`/api/services/${id}`, {
+//       method: 'DELETE',
+//     });
+//   } catch (error) {
+//     console.error(`Error deleting legal service with ID ${id}:`, error);
+//     throw error;
+//   }
+// }
+
+// ***********************
+
+import { serverFetch, serverMutation } from "../core/server";
 
 /**
- * ডাটাবেজ থেকে সমস্ত লিগ্যাল সার্ভিস রিয়েল-টাইমে নিয়ে আসার অ্যাকশন
+ * 📋 ডাটাবেজ থেকে সমস্ত লিগ্যাল সার্ভিস রিয়েল-টাইমে নিয়ে আসার অ্যাকশন
+ * (যদি ব্যাকএন্ডে এই রুটটি প্রোটেক্টেড থাকে তবে ২য় প্যারামিটার true পাস করুন)
  */
 export async function getAllLegalServices() {
   try {
@@ -123,17 +190,12 @@ export async function getAllLegalServices() {
 }
 
 /**
- * নতুন লিগ্যাল সার্ভিস প্রফেশনাল ডাটাবেজে যুক্ত করার অ্যাকশন
+ * ➕ নতুন লিগ্যাল সার্ভিস প্রফেশনাল ডাটাবেজে যুক্ত করার অ্যাকশন
  */
 export async function createLegalService(serviceData) {
   try {
-    return await serverFetch('/api/services', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(serviceData),
-    });
+    // 🔐 serverMutation স্বয়ংক্রিয়ভাবে POST মেথড, হেডার এবং সেশন টোকেন ইনজেক্ট করবে
+    return await serverMutation('/api/services', 'POST', serviceData);
   } catch (error) {
     console.error("Error creating legal service:", error);
     throw error;
@@ -141,17 +203,12 @@ export async function createLegalService(serviceData) {
 }
 
 /**
- * সুনির্দিষ্ট সার্ভিস আইডি ধরে ডেটা আপডেট বা ম্যুটেশন করার অ্যাকশন
+ * 🔄 সুনির্দিষ্ট সার্ভিস আইডি ধরে ডেটা আপডেট বা ম্যুটেশন করার অ্যাকশন
  */
 export async function updateLegalService(id, updatedData) {
   try {
-    return await serverFetch(`/api/services/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedData),
-    });
+    // 🔐 PUT মেথডের মাধ্যমে ডেটা আপডেট ও সেশন ভেরিফিকেশন
+    return await serverMutation(`/api/services/${id}`, 'PUT', updatedData);
   } catch (error) {
     console.error(`Error updating legal service with ID ${id}:`, error);
     throw error;
@@ -159,13 +216,12 @@ export async function updateLegalService(id, updatedData) {
 }
 
 /**
- * সুনির্দিষ্ট লিগ্যাল সার্ভিস কালেকশন থেকে ডিলিট করার অ্যাকশন
+ * 🗑️ সুনির্দিষ্ট লিগ্যাল সার্ভিস কালেকশন থেকে ডিলিট করার অ্যাকশন
  */
 export async function deleteLegalService(id) {
   try {
-    return await serverFetch(`/api/services/${id}`, {
-      method: 'DELETE',
-    });
+    // 🔐 DELETE মেথডের মাধ্যমে সার্ভিস রিমুভ ও সেশন ভেরিফিকেশন
+    return await serverMutation(`/api/services/${id}`, 'DELETE');
   } catch (error) {
     console.error(`Error deleting legal service with ID ${id}:`, error);
     throw error;

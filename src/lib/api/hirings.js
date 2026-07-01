@@ -50,18 +50,56 @@
 
 // **********************************************
 
+// 'use server' // এটি নিশ্চিত করবে যে ফাইলটি শুধু সার্ভারেই রান হবে
+
+// import { serverFetch, serverMutation } from "../core/server";
+// import { getUserSession } from "../core/session";
+
+// // ১. নির্দিষ্ট ইমেইলের রিকোয়েস্টগুলো ব্যাকএন্ড থেকে আনা
+// export const getLawyerHirings = async (lawyerEmail) => {
+//   // 💡 ব্যাকএন্ডের ইউনিফর্ম পাথ অনুযায়ী পাথের শুরুতে '/api' যুক্ত করা হলো
+//   return serverFetch(`/api/lawyer/hirings/${encodeURIComponent(lawyerEmail.toLowerCase().trim())}`);
+// };
+
+// ২. সেশনে থাকা বর্তমান লগইন করা আইনজীবীর রিকোয়েস্টগুলো আনা
+// export const getLoggedInLawyerHirings = async () => {
+//   try {
+//     const user = await getUserSession();
+//     if (!user || !user.email) return [];
+//     return await getLawyerHirings(user.email);
+//   } catch (error) {
+//     console.error("Error in getLoggedInLawyerHirings Server Action:", error);
+//     return [];
+//   }
+// };
+
+// // ৩. রিকোয়েস্ট Accept বা Reject করার অ্যাকশন (PATCH Mutation)
+// export const updateHiringRequestStatus = async (id, status) => {
+//   // 💡 এখানেও ব্যাকএন্ড রাউটের সাথে মিলিয়ে '/api/hirings/' ব্যবহার করা হলো
+//   return serverMutation(`/api/hirings/${id}`, 'PATCH', { status });
+// };
+
+// *****************************
+
 'use server' // এটি নিশ্চিত করবে যে ফাইলটি শুধু সার্ভারেই রান হবে
 
 import { serverFetch, serverMutation } from "../core/server";
 import { getUserSession } from "../core/session";
 
-// ১. নির্দিষ্ট ইমেইলের রিকোয়েস্টগুলো ব্যাকএন্ড থেকে আনা
+/**
+ * 👨‍⚖️ ১. নির্দিষ্ট ইমেইলের রিকোয়েস্টগুলো ব্যাকএন্ড থেকে আনা
+ */
 export const getLawyerHirings = async (lawyerEmail) => {
-  // 💡 ব্যাকএন্ডের ইউনিফর্ম পাথ অনুযায়ী পাথের শুরুতে '/api' যুক্ত করা হলো
-  return serverFetch(`/api/lawyer/hirings/${encodeURIComponent(lawyerEmail.toLowerCase().trim())}`);
+  // 🔐 ব্যাকএন্ডের সিকিউর রাউটের সাথে ম্যাচ করার জন্য ২য় প্যারামিটার true পাস করা হলো
+  return serverFetch(
+    `/api/lawyer/hirings/${encodeURIComponent(lawyerEmail.toLowerCase().trim())}`, 
+    true
+  );
 };
 
-// ২. সেশনে থাকা বর্তমান লগইন করা আইনজীবীর রিকোয়েস্টগুলো আনা
+/**
+ * 🔑 ২. সেশনে থাকা বর্তমান লগইন করা আইনজীবীর রিকোয়েস্টগুলো আনা
+ */
 export const getLoggedInLawyerHirings = async () => {
   try {
     const user = await getUserSession();
@@ -73,8 +111,10 @@ export const getLoggedInLawyerHirings = async () => {
   }
 };
 
-// ৩. রিকোয়েস্ট Accept বা Reject করার অ্যাকশন (PATCH Mutation)
+/**
+ * 🔄 ৩. রিকোয়েস্ট Accept বা Reject করার অ্যাকশন (PATCH Mutation)
+ */
 export const updateHiringRequestStatus = async (id, status) => {
-  // 💡 এখানেও ব্যাকএন্ড রাউটের সাথে মিলিয়ে '/api/hirings/' ব্যবহার করা হলো
+  // 🔐 serverMutation স্বয়ংক্রিয়ভাবে PATCH মেথড, হেডার এবং সেশন টোকেন ইনজেক্ট করবে
   return serverMutation(`/api/hirings/${id}`, 'PATCH', { status });
 };

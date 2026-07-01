@@ -29,14 +29,48 @@
 
 // *************************************************************************
 
+// import { serverFetch } from "../core/server";
+
+// /**
+//  * সমস্ত আইনজীবীর প্রোফাইল ব্যাকএন্ড থেকে ফেচ করার অ্যাকশন
+//  */
+// export const getLawyers = async () => {
+//   try {
+//     return await serverFetch('/api/lawyers');
+//   } catch (error) {
+//     console.error("Error fetching lawyer profiles directory:", error);
+//     return [];
+//   }
+// };
+
+// /**
+//  * সুনির্দিষ্ট আইডি দিয়ে একজন আইনজীবীর বিস্তারিত তথ্য নিয়ে আসার অ্যাকশন
+//  */
+// export const getLawyerById = async (lawyerId) => {
+//   try {
+//     return await serverFetch(`/api/lawyers/${lawyerId}`);
+//   } catch (error) {
+//     console.error(`Error fetching lawyer profile for ID ${lawyerId}:`, error);
+//     return null;
+//   }
+// };
+
+// ********************************8
+
 import { serverFetch } from "../core/server";
 
 /**
- * সমস্ত আইনজীবীর প্রোফাইল ব্যাকএন্ড থেকে ফেচ করার অ্যাকশন
+ * সমস্ত আইনজীবীর প্রোফাইল ব্যাকএন্ড থেকে ফেচ করার অ্যাকশন (সার্চ সাপোর্টসহ)
+ * @param {string} searchQuery - নাম বা স্পেশালিস্ট দিয়ে খোঁজার জন্য অপশনাল কুয়েরি
  */
-export const getLawyers = async () => {
+export const getLawyers = async (searchQuery = "") => {
   try {
-    return await serverFetch('/api/lawyers');
+    // যদি সার্চ কোয়েরি থাকে তবে সেটি এনকোড করে এপিআই পাথের সাথে জুড়ে দেওয়া হবে
+    const path = searchQuery 
+      ? `/api/lawyers?search=${encodeURIComponent(searchQuery)}` 
+      : '/api/lawyers';
+      
+    return await serverFetch(path);
   } catch (error) {
     console.error("Error fetching lawyer profiles directory:", error);
     return [];
@@ -44,7 +78,8 @@ export const getLawyers = async () => {
 };
 
 /**
- * সুনির্দিষ্ট আইডি দিয়ে একজন আইনজীবীর বিস্তারিত তথ্য নিয়ে আসার অ্যাকশন
+ * সুনির্দিষ্ট আইডি দিয়ে একজন আইনজীবীর বিস্তারিত তথ্য নিয়ে আসার অ্যাকশন
+ * @param {string} lawyerId - আইনজীবীর অনন্য মঙ্গোডিবি আইডি
  */
 export const getLawyerById = async (lawyerId) => {
   try {

@@ -177,27 +177,160 @@
 
 // *****************************
 
-import React from 'react';
+// import React from 'react';
+// import { Shield } from '@gravity-ui/icons';
+// import { getAllSystemUsers } from '@/lib/api/users';
+// import UsersListGrid from '@/components/dashboard/UsersListGrid';
+
+// export const dynamic = "force-dynamic";
+
+// const AdminManageUsersPage = async () => {
+//     // এপিআই কল করার ট্রাই-ক্যাচ ব্লক
+//     let usersData = [];
+//     try {
+//         usersData = await getAllSystemUsers();
+//     } catch (error) {
+//         console.error("Failed to load registry database rows:", error);
+//     }
+    
+//     // ডাটাবেজের অবজেক্ট স্ট্রাকচার সেফগার্ড ভেরিফিকেশন
+//     const users = Array.isArray(usersData) 
+//         ? usersData 
+//         : (usersData?.data || usersData?.users || []);
+    
+//     return (
+//         <div className="min-h-[calc(100vh-4rem)] bg-[#09090b] p-6 md:p-10 text-slate-100">
+//             <div className="max-w-7xl mx-auto space-y-8">
+                
+//                 {/* হেডার ম্যাট্রিক্স */}
+//                 <div className="border-b border-zinc-800 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+//                     <div>
+//                         <h2 className="text-2xl font-serif font-bold tracking-tight text-white flex items-center gap-2">
+//                             <Shield className="text-amber-500 size-6" /> User Authorization Matrix
+//                         </h2>
+//                         <p className="text-xs text-zinc-400 mt-1">
+//                             System administrative cockpit to update clearance levels, verify legal retainers, or revoke identity registry tokens.
+//                         </p>
+//                     </div>
+                    
+//                     <div className="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl text-xs text-zinc-400">
+//                         Total Registry Records: <span className="font-mono text-amber-400 font-bold">{users.length}</span>
+//                     </div>
+//                 </div>
+                
+//                 {/* কাস্টম গ্রিড লিস্ট */}
+//                 <UsersListGrid initialUsers={users} />
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default AdminManageUsersPage;
+
+// ******************************************
+
+// import React from 'react';
+// import { Shield } from '@gravity-ui/icons';
+// import { getAllSystemUsers } from '@/lib/api/users';
+// import UsersListGrid from '@/components/dashboard/UsersListGrid';
+
+// export const dynamic = "force-dynamic";
+
+// const AdminManageUsersPage = async () => {
+//     // এপিআই কল করার ট্রাই-ক্যাচ ব্লক
+//     let usersData = [];
+//     try {
+//         // 🔐 এই ইন্টারনাল ফাংশনটির ভেতরেই আমরা সেশন টোকেন পাসের ব্যবস্থা করব
+//         usersData = await getAllSystemUsers();
+//     } catch (error) {
+//         console.error("Failed to load registry database rows:", error);
+//     }
+    
+//     // ডাটাবেজের অবজেক্ট স্ট্রাকচার সেফগার্ড ভেরিফিকেশন
+//     const users = Array.isArray(usersData) 
+//         ? usersData 
+//         : (usersData?.data || usersData?.users || []);
+    
+//     return (
+//         <div className="min-h-[calc(100vh-4rem)] bg-[#09090b] p-6 md:p-10 text-slate-100">
+//             <div className="max-w-7xl mx-auto space-y-8">
+                
+//                 {/* হেডার ম্যাট্রিক্স */}
+//                 <div className="border-b border-zinc-800 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+//                     <div>
+//                         <h2 className="text-2xl font-serif font-bold tracking-tight text-white flex items-center gap-2">
+//                             <Shield className="text-amber-500 size-6" /> User Authorization Matrix
+//                         </h2>
+//                         <p className="text-xs text-zinc-400 mt-1">
+//                             System administrative cockpit to update clearance levels, verify legal retainers, or revoke identity registry tokens.
+//                         </p>
+//                     </div>
+                    
+//                     <div className="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl text-xs text-zinc-400">
+//                         Total Registry Records: <span className="font-mono text-amber-400 font-bold">{users.length}</span>
+//                     </div>
+//                 </div>
+                
+//                 {/* কাস্টম গ্রিড লিস্ট */}
+//                 <UsersListGrid initialUsers={users} />
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default AdminManageUsersPage;
+
+// ************************************
+
+'use client'; // 👈 পেজটিকে ক্লায়েন্ট সাইড কম্পোনেন্ট করা হলো যাতে ব্রাউজার থেকে সরাসরি সেফ এপিআই কল হয়
+
+import React, { useEffect, useState } from 'react';
 import { Shield } from '@gravity-ui/icons';
 import { getAllSystemUsers } from '@/lib/api/users';
 import UsersListGrid from '@/components/dashboard/UsersListGrid';
 
-export const dynamic = "force-dynamic";
+const AdminManageUsersPage = () => {
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [errorMsg, setErrorMsg] = useState(null);
 
-const AdminManageUsersPage = async () => {
-    // এপিআই কল করার ট্রাই-ক্যাচ ব্লক
-    let usersData = [];
-    try {
-        usersData = await getAllSystemUsers();
-    } catch (error) {
-        console.error("Failed to load registry database rows:", error);
-    }
-    
-    // ডাটাবেজের অবজেক্ট স্ট্রাকচার সেফগার্ড ভেরিফিকেশন
-    const users = Array.isArray(usersData) 
-        ? usersData 
-        : (usersData?.data || usersData?.users || []);
-    
+    // 🌐 ক্লায়েন্ট সাইড ডাটা ফেচিং
+    useEffect(() => {
+        async function fetchUsers() {
+            try {
+                setLoading(true);
+                const usersData = await getAllSystemUsers();
+                
+                console.log("--- BACKEND RAW RESPONSE ---", usersData); // 🔍 ব্রাউজারের কনসোলে ডাটা চেক করার জন্য
+
+                // 🛡️ এক্সপ্রেস ব্যাকএন্ডের বিভিন্ন সম্ভাব্য অবজেক্ট স্ট্রাকচার সেফগার্ড ভেরিফিকেশন
+                let validatedUsers = [];
+                if (Array.isArray(usersData)) {
+                    validatedUsers = usersData;
+                } else if (usersData && Array.isArray(usersData.data)) {
+                    validatedUsers = usersData.data;
+                } else if (usersData && Array.isArray(usersData.users)) {
+                    validatedUsers = usersData.users;
+                } else if (usersData && typeof usersData === 'object') {
+                    // যদি অবজেক্টের ভেতরে অন্য কোনো কি-তে অ্যারে থাকে (যেমন: usersData.allUsers)
+                    const fallbackKey = Object.keys(usersData).find(key => Array.isArray(usersData[key]));
+                    if (fallbackKey) {
+                        validatedUsers = usersData[fallbackKey];
+                    }
+                }
+                
+                setUsers(validatedUsers);
+            } catch (error) {
+                console.error("Failed to load registry database rows:", error);
+                setErrorMsg("Failed to retrieve user registry records.");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchUsers();
+    }, []);
+
     return (
         <div className="min-h-[calc(100vh-4rem)] bg-[#09090b] p-6 md:p-10 text-slate-100">
             <div className="max-w-7xl mx-auto space-y-8">
@@ -214,12 +347,33 @@ const AdminManageUsersPage = async () => {
                     </div>
                     
                     <div className="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl text-xs text-zinc-400">
-                        Total Registry Records: <span className="font-mono text-amber-400 font-bold">{users.length}</span>
+                        {loading ? (
+                            "Loading records..."
+                        ) : (
+                            <>Total Registry Records: <span className="font-mono text-amber-400 font-bold">{users.length}</span></>
+                        )}
                     </div>
                 </div>
                 
-                {/* কাস্টম গ্রিড লিস্ট */}
-                <UsersListGrid initialUsers={users} />
+                {/* ⏳ লোডিং এবং এরর স্টেট হ্যান্ডলিং */}
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
+                        <p className="text-sm text-zinc-400 font-mono">Syncing system authorization database...</p>
+                    </div>
+                ) : errorMsg ? (
+                    <div className="bg-red-950/20 border border-red-900/50 p-4 rounded-xl text-center text-sm text-red-400 font-mono">
+                        {errorMsg}
+                    </div>
+                ) : users.length === 0 ? (
+                    <div className="bg-zinc-900/50 border border-zinc-800 p-12 rounded-xl text-center space-y-2">
+                        <p className="text-zinc-400 text-sm">No user records found in the core registry.</p>
+                        <p className="text-zinc-600 text-xs font-mono">Tip: Check if your Express backend is running and connected to MongoDB Atlas.</p>
+                    </div>
+                ) : (
+                    /* কাস্টম গ্রিড লিস্ট */
+                    <UsersListGrid initialUsers={users} />
+                )}
             </div>
         </div>
     );

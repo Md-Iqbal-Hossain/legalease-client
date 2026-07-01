@@ -101,43 +101,151 @@
 
 // *****************************************************
 
-import { auth } from "../auth";
-import { headers } from "next/headers"; 
-import { redirect } from "next/navigation"; // 👈 রিডাইরেক্ট ইম্পোর্ট করা হলো
+// import { auth } from "../auth";
+// import { headers } from "next/headers"; 
+// import { redirect } from "next/navigation"; // 👈 রিডাইরেক্ট ইম্পোর্ট করা হলো
 
+// export const getUserSession = async () => {
+//   try {
+//     const sessionPromise = auth.api.getSession({
+//       headers: await headers(), 
+//     });
+
+//     const timeoutPromise = new Promise((_, reject) =>
+//       setTimeout(() => reject(new Error("Timeout")), 2000)
+//     );
+
+//     const session = await Promise.race([sessionPromise, timeoutPromise]);
+//     return session?.user || null;
+//   } catch (error) {
+//     console.error("Session fetch bypassed to prevent blocking:", error);
+//     return null; 
+//   }
+// };
+
+// /* =========================================================================
+//     🛡️ LEGALEASE SERVER-SIDE ROLE VALIDATOR
+//    ========================================================================= */
+// export const requireRole = async (role) => {
+//   const user = await getUserSession();
+  
+//   // ১. সেশন না থাকলে সরাসরি সাইন-ইন পেজে পুশ করবে
+//   if (!user) {
+//     redirect('/auth/signin');
+//   }
+  
+//   // ২. রোল না মিললে আন-অথোরাইজড প্রোটেকশন পেজে নিয়ে যাবে
+//   if (user?.role !== role) {
+//     redirect('/unauthorized');
+//   }
+  
+//   return user;
+// };
+
+// ******************************************
+
+// import { auth } from "../auth";
+// import { headers } from "next/headers"; 
+// import { redirect } from "next/navigation";
+
+// export const getUserSession = async () => {
+//   try {
+//     const sessionPromise = auth.api.getSession({
+//       headers: await headers(), 
+//     });
+
+//     // ২ সেকেন্ডের টাইমআউট প্রমিস
+//     const timeoutPromise = new Promise((_, reject) =>
+//       setTimeout(() => reject(new Error("Timeout")), 2000)
+//     );
+
+//     // সেশন এবং টাইমআউটের মধ্যে রেস
+//     const session = await Promise.race([sessionPromise, timeoutPromise]);
+//     return session?.user || null;
+//   } catch (error) {
+//     console.error("Session fetch bypassed to prevent blocking:", error);
+//     return null; 
+//   }
+// };
+
+// /* =========================================================================
+//    🛡️ LEGALEASE SERVER-SIDE ROLE VALIDATOR (Optimized for Next.js)
+//    ========================================================================= */
+// export const requireRole = async (role) => {
+//   const user = await getUserSession();
+  
+//   // ১. সেশন না থাকলে সরাসরি সাইন-ইন পেজে পুশ করবে
+//   if (!user) {
+//     redirect('/auth/signin');
+//   }
+  
+//   // ২. রোল না মিললে আন-অথোরাইজড প্রোটেকশন পেজে নিয়ে যাবে
+//   if (user?.role !== role) {
+//     redirect('/unauthorized');
+//   }
+  
+//   return user;
+// };
+
+// ******************************************
+
+// import { auth } from "../auth";
+// import { headers } from "next/headers"; 
+// import { redirect } from "next/navigation";
+
+// /**
+//  * 🖥️ সার্ভার কম্পোনেন্ট বা সার্ভার অ্যাকশন থেকে বর্তমান ইউজার সেশন ডাটা বের করার হেল্পার (টাইমআউট সেফগার্ড সহ)
+//  */
+// export const getUserSession = async () => {
+//   try {
+//     const sessionPromise = auth.api.getSession({
+//       headers: await headers(), 
+//     });
+
+//     // ২ সেকেন্ডের টাইমআউট প্রমিস
+//     const timeoutPromise = new Promise((_, reject) =>
+//       setTimeout(() => reject(new Error("Timeout")), 2000)
+//     );
+
+//     // সেশন এবং টাইমআউটের মধ্যে রেস
+//     const session = await Promise.race([sessionPromise, timeoutPromise]);
+//     return session?.user || null;
+//   } catch (error) {
+//     console.error("Session fetch bypassed to prevent blocking:", error);
+//     return null; 
+//   }
+// };
+
+// /* =========================================================================
+//    🛡️ LEGALEASE SERVER-SIDE ROLE VALIDATOR (Optimized for Next.js)
+//    ========================================================================= */
+// export const requireRole = async (role) => {
+//   const user = await getUserSession();
+  
+//   // ১. সেশন না থাকলে সরাসরি সাইন-ইন পেজে পুশ করবে
+//   if (!user) {
+//     redirect('/auth/signin');
+//   }
+  
+//   // ২. রোল না মিললে আন-অথোরাইজড প্রোটেকশন পেজে নিয়ে যাবে
+//   if (user?.role !== role) {
+//     redirect('/unauthorized');
+//   }
+  
+//   return user;
+// };
+
+// *********************************************
+
+import { getSession } from "@/lib/auth-client"; // Better-Auth ক্লায়েন্ট হুক
+
+/**
+ * 🌐 ক্লায়েন্ট সাইড (Client Component) থেকে সেশন ডাটা বের করার হেল্পার
+ */
 export const getUserSession = async () => {
-  try {
-    const sessionPromise = auth.api.getSession({
-      headers: await headers(), 
-    });
-
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), 2000)
-    );
-
-    const session = await Promise.race([sessionPromise, timeoutPromise]);
+  if (typeof window !== "undefined") {
+    const session = await getSession();
     return session?.user || null;
-  } catch (error) {
-    console.error("Session fetch bypassed to prevent blocking:", error);
-    return null; 
   }
-};
-
-/* =========================================================================
-    🛡️ LEGALEASE SERVER-SIDE ROLE VALIDATOR
-   ========================================================================= */
-export const requireRole = async (role) => {
-  const user = await getUserSession();
-  
-  // ১. সেশন না থাকলে সরাসরি সাইন-ইন পেজে পুশ করবে
-  if (!user) {
-    redirect('/auth/signin');
-  }
-  
-  // ২. রোল না মিললে আন-অথোরাইজড প্রোটেকশন পেজে নিয়ে যাবে
-  if (user?.role !== role) {
-    redirect('/unauthorized');
-  }
-  
-  return user;
+  return null;
 };
